@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Member">
+	<parameterMap type="memberVO" id="insertParameterMap">
+		<parameter property="userid" javaType="string"
+			jdbcType="VARCHAR" mode="IN" />
+		<parameter property="passwd" javaType="string"
+			jdbcType="VARCHAR" mode="IN" />
+		<parameter property="name" javaType="string"
+			jdbcType="VARCHAR" mode="IN" />
+		<parameter property="age" javaType="int"
+			jdbcType="INTEGER" mode="IN" />
+		<parameter property="gender" javaType="string"
+			jdbcType="VARCHAR" mode="IN" />
+		<parameter property="city" javaType="string"
+			jdbcType="VARCHAR" mode="IN" />
+	</parameterMap>
+	<insert id="insert" parameterType="memberVO"
+		parameterMap="insertParameterMap" statementType="CALLABLE">
+		{ call member_insert_sp(?,?,?,?,?,?) }
+	</insert>
+	
+	<resultMap type="memberVO" id="selectMap">
+		<result property="userid" column="userid"/>
+		<result property="passwd" column="passwd"/>
+		<result property="name" column="name"/>
+		<result property="age" column="age"/>
+		<result property="gender" column="gender"/>
+		<result property="city" column="city"/>
+	</resultMap>	
+	<select id="selectAll" statementType="CALLABLE" resultMap="selectMap">
+		{ call member_select_all_sp() }	
+	</select>
+	
+	<parameterMap type="string" id="selectParameterMap">
+		<parameter property="userid" javaType="string" jdbcType="VARCHAR" mode="IN"/>
+	</parameterMap>
+	<select id="select" statementType="CALLABLE" parameterType="string" parameterMap="selectParameterMap" resultMap="selectMap">
+		{ call member_select_sp(?) }
+	</select>
+	
+	<parameterMap type="memberVO" id="parameterUpdateMap">
+		<parameter property="age" javaType="int" jdbcType="INTEGER" />
+		<parameter property="gender" javaType="string" jdbcType="VARCHAR"/>
+		<parameter property="city" javaType="string" jdbcType="VARCHAR"/>
+		<parameter property="userid" javaType="string" jdbcType="VARCHAR"/>
+	</parameterMap>
+	<update id="update" parameterType="memberVO" parameterMap="parameterUpdateMap" statementType="CALLABLE">
+		{ call member_update_sp(?,?,?,?) }
+	</update>
+	
+	<delete id="delete" parameterType="java.lang.String" statementType="CALLABLE">
+		{ call member_delete_sp(#{userid}) }
+	</delete>
+</mapper>

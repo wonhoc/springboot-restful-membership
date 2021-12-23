@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <title>회원목록</title>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>
+		let userid = null;
+		$(function(){
+			userid = location.search.substring(1).split("=")[1];
+			$.ajax({
+				url : "members/" + userid,
+				type : "GET",
+				success : function(data){
+					const member = data.data;
+					if(member.gender == '1') $("#gender").text('남성');
+					else if(member.gender == '0') $("#gender").text('여성');
+					$("#userid").text(member.userid);
+					$("#name").text(member.name);
+					$("#age").text(member.age);
+					$("#city").text(member.city);
+				}
+			});
+		});
+		
+		let flag = false;
+		function member_update(){
+			if(!flag){ //수정하기를 click하면
+				const age = $("#age").text();
+				$("span#age").replaceWith("<input type='number' id='age' value=" + age + ">");
+				const gender = $("#gender").text();
+				let str = null;
+				if(gender == "남성"){
+					str = "<input type='radio' class='gender' value='1' checked/>남성&nbsp;&nbsp;" +
+						  	"<input type='radio' class='gender' value='0' />여성";
+				}else{
+					str = "<input type='radio' class='gender' name='gender' value='1'/>남성&nbsp;&nbsp;" +
+							"<input type='radio' class='gender' name='gender' value='0' checked />여성";
+				}
+				$("span#gender").replaceWith(str);
+				str = null;
+				const city = $("#city").text();
+				str = "<select name='city' id='city'>" + 
+						"<option value=''>--선택--</option>";
+				str += (city == "서울") ? "<option value='서울' selected>" : "<option value='서울'>";
+				str += "서울</option>";
+				str += (city == "부산") ? "<option value='부산' selected>" : "<option value='부산'>";
+				str += "부산</option>";
+				str += (city == "대전") ? "<option value='대전' selected>" : "<option value='대전'>";
+				str += "대전</option>";
+				str += (city == "광주") ? "<option value='광주' selected>" : "<option value='광주'>";
+				str += "광주</option>";
+				str += (city == "대구") ? "<option value='대구' selected>" : "<option value='대구'>";
+				str += "대구</option>";
+				$("span#city").replaceWith(str);
+					flag = true;
+			}else{
+				$.ajax({
+					url : "members",
+					type : "PUT",
+					data : JSON.stringify({
+						"userid" : userid,
+						"age" : $("#age").val(),
+						"gender" : $(".gender:checked").val(),
+						"city" : $("#city").val()
+					}),
+					contentType : "application/json;charset=utf-8",
+					success : function(data){
+						alert(data.code);
+						location.reload();
+					}
+				});
+				flag = false;
+			}
+		};
+		
+		function member_delete(){
+			$.ajax({
+				url : "members/" + userid,
+				type : "DELETE",
+				success : function(data){
+					alert(data.code);
+					location.href = "list.html";
+				}
+			});
+		}
+	</script>
+</head>
+<body>
+	<div class="container">
+        <div class="row">
+            <div class="jumbotron">
+                <h1 class="text-center">www.example.com</h1>
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit soluta unde molestias eveniet placeat est nemo deleniti, voluptates voluptas accusamus architecto ullam quibusdam neque amet hic recusandae ad excepturi praesentium?</p>
+            </div>
+        </div>
+    </div>
+	<div class="container">
+		<div class="row">
+			<h1>Member Information</h1>
+			<ul>
+				<li>아이디 : <span id="userid"></span></li>
+				<li>이름 : <span id="name"></span></li>
+				<li>성별 : <span id="gender"></span></li>
+				<li>나이 : <span id="age"></span></li>
+				<li>거주지 : <span id="city"></span></li>
+			</ul>
+			<a href = "javascript:void(0)" onclick="javascript:history.back();">목록으로</a>
+			<a href = "javascript:void(0)" onclick="javascript:member_update()">수정하기</a>
+			<a href = "javascript:void(0)" onclick="javascript:member_delete()">삭제하기</a>
+		</div>
+	</div>
+</body>

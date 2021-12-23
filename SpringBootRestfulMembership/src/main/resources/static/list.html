@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <title>회원목록</title>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function(){
+            $.ajax({
+                url : "members",
+                type : "GET",
+                dataType : "json",
+                success : function(data){
+                	let str = "";
+                	const members = data.data;
+                	for(var i = 0 ; i < members.length ; i++){
+                		str += "<tr>";
+                		const userid = members[i].userid;
+                		str += "<td><a href='view.html?userid=" + userid + "'>" + userid + "</a></td>" +
+                				"<td>" + members[i].name + "</td>" +
+                				"<td>" + members[i].gender + "</td>" +
+                				"<td>" + members[i].age + "</td>" +
+                				"<td>" + members[i].city + "</td>";
+                		str += "</tr>";
+                	}
+                	$("#result").html(str);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+	<div class="container">
+        <div class="row">
+            <div class="jumbotron">
+                <h1 class="text-center">www.example.com</h1>
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit soluta unde molestias eveniet placeat est nemo deleniti, voluptates voluptas accusamus architecto ullam quibusdam neque amet hic recusandae ad excepturi praesentium?</p>
+            </div>
+        </div>
+    </div>
+	<div class="container">
+		<div class="row">
+			<h1>Member List</h1>
+		</div>
+		<div class="row">
+			<div>
+				<a href="register.html">Member Add</a>
+			</div>
+			<div>
+				<table  class="table table-hover">
+					<thead>
+						<tr>
+							<th>아이디</th><th>이름</th><th>성별</th><th>나이</th><th>거주지</th>
+						</tr>
+					</thead>
+					<tbody id="result">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
